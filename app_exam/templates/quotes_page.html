@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes Page</title>
+</head>
+
+<body>
+
+    <h1>Welcome {{loggedInUser.first_name}} {{loggedInUser.last_name}}</h1>
+
+    <a href="edit/{{loggedInUser.id}}">Edit My Account</a>
+    <form action="logout">
+        <button type="submit">Logout</button>
+    </form>
+
+
+
+    {% if messages %}
+    {% for message in messages %}
+    <p style="color:red">{{message}}</p>
+    {% endfor %}
+    {% endif %}
+    {% csrf_token %}
+
+
+    <form action="addQuote" method="post">
+        {% csrf_token %}
+        <p>Author <input type="text" name="quote_author" id=""></p>
+        <p>Quote <br> <textarea name="quote_content" id="" cols="20" rows="5"></textarea></p>
+        <button type="submit">Summit</button>
+    </form>
+    <div class="quote">
+        {% for quote in allQuotes %}
+        <p>{{quote.author}}: "{{quote.content}}"</p>
+
+        <p>Posted By: </h4><a href="user/{{quote.posted_by.id}}">{{quote.posted_by.first_name}}
+                {{quote.posted_by.last_name}}:</p></a>
+
+        <p>{{quote.likers.count}} people like this</p>
+
+        <form action="like/{{quote.id}}" method="post">
+            {% csrf_token %}
+            <button type="submit">Like</button>
+        </form>
+        <br>
+        {% if loggedInUser.id == quote.posted_by.id %}
+        <form action="delete/{{quote.id}}">
+            <button type="submit">Delete</button>
+        </form>
+        {% endif %}
+        <hr>
+        {% endfor %}
+    </div>
+
+
+</body>
+
+</html>
